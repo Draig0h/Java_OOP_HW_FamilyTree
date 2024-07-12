@@ -1,20 +1,23 @@
-import javax.management.ObjectName;
+package family_tree.human;
+
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Human {
+public class Human implements Serializable {
     private long id;
     private String name;
-    private int age;
+    private LocalDate birthDate;
     private Gender gender;
     private Human father, mother;
     private List<Human> children;
 
-    public Human(String name, int age, Gender gender, Human father, Human mother) {
+    public Human(String name, LocalDate birthDate, Gender gender, Human father, Human mother) {
         id = -1;
         this.name = name;
-        this.age = age;
+        this.birthDate = birthDate;
         this.gender = gender;
         this.father = father;
         this.mother = mother;
@@ -22,8 +25,8 @@ public class Human {
 
     }
 
-    public Human(String name, int age, Gender gender) {
-        this(name, age, gender, null, null);
+    public Human(String name, LocalDate birthDate, Gender gender) {
+        this(name, birthDate, gender, null, null);
     }
 
     public boolean addChild(Human child) {
@@ -91,7 +94,9 @@ public class Human {
     }
 
     public int getAge() {
-        return age;
+        LocalDate endDate = LocalDate.now();
+        Period period = Period.between(birthDate, endDate);
+        return period.getYears();
     }
 
     public long getId() {
@@ -111,7 +116,7 @@ public class Human {
         stringBuilder.append(", gender: ");
         stringBuilder.append(gender);
         stringBuilder.append(", age: ");
-        stringBuilder.append(age);
+        stringBuilder.append(this.getAge());
         stringBuilder.append(", father: ");
         stringBuilder.append(getFatherInfo());
         stringBuilder.append(", mother: ");
@@ -132,14 +137,14 @@ public class Human {
     public String getMotherInfo() {
         String result = "mother: ";
         Human mother = getMother();
-        if (mother != null) result += father.getName();
+        if (mother != null) result += mother.getName();
         else result += "unknown";
         return result;
     }
 
     public String getChildrenInfo() {
         StringBuilder result = new StringBuilder("children: ");
-        if (children.size() != 0) {
+        if (!children.isEmpty()) {
             result.append(children.get(0).getName());
             for (int i = 1; i < children.size(); i++) {
                 result.append(", ");
